@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Brand palette pulled from thetargetologist.com (Elementor kit + page CSS). */
+@theme {
+  --color-brand: #e4572e;
+  --color-brand-dark: #c8461f;
+  --color-brand-soft: #fdf0eb;
+  --color-ink: #020202;
+  --color-ink-soft: #0f172a;
+  --color-muted: #667085;
+  --color-line: #eaecf0;
+  --color-line-strong: #d4d4d4;
+  --color-paper: #ffffff;
+  --color-paper-alt: #f8f8f7;
+
+  --font-sans: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* FAQ accordion: hide the default marker and rotate the custom one. */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-icon {
+  transform: rotate(45deg);
+}
