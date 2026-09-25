@@ -40,6 +40,7 @@ export function Booking() {
   const [state, formAction, pending] = useActionState(submitLead, initialState);
   const attribution = useAttribution();
   const booked = state.status === "success";
+  const [scheduled, setScheduled] = useState(false);
   const errors = state.status === "error" ? state.errors : {};
   const values = state.status === "error" ? state.values : undefined;
 
@@ -89,10 +90,26 @@ export function Booking() {
           </p>
         </div>
 
-        <div className="rounded-3xl bg-white p-5 shadow-2xl sm:p-6 md:p-8">
-          <Steps current={booked ? 2 : 1} />
-          {booked ? (
-            <CalendlyStep lead={state.lead} attribution={attribution} />
+        <div
+          id="book-card"
+          className="scroll-mt-24 rounded-3xl bg-white p-5 shadow-2xl sm:p-6 md:p-8"
+        >
+          <Steps current={scheduled ? 3 : booked ? 2 : 1} />
+          {booked && scheduled ? (
+            <Confirmation lead={state.lead} />
+          ) : booked ? (
+            <CalendlyStep
+              lead={state.lead}
+              attribution={attribution}
+              onScheduled={() => {
+                setScheduled(true);
+                // Tells the mobile sticky CTA to stop offering a booking.
+                window.dispatchEvent(new Event("targetologist:booked"));
+                document
+                  .getElementById("book-card")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            />
           ) : (
             <form
               key={state.status === "error" ? state.attempt : "form"}
@@ -189,7 +206,7 @@ export function Booking() {
   );
 }
 
-function Steps({ current }: { current: 1 | 2 }) {
+function Steps({ current }: { current: 1 | 2 | 3 }) {
   return (
     <ol className="flex items-center gap-2 text-xs font-semibold whitespace-nowrap sm:gap-3 sm:text-sm">
       {["Your Details", "Pick a Time"].map((label, i) => {
@@ -257,12 +274,22 @@ function Field({
   );
 }
 
+type Lead = { name: string; email: string; challenge: string };
+
+// "kamal ahmed" -> "Kamal"
+function firstName(name: string) {
+  const first = name.trim().split(/\s+/)[0] ?? "";
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
+
 function CalendlyStep({
   lead,
   attribution,
+  onScheduled,
 }: {
-  lead: { name: string; email: string; challenge: string };
+  lead: Lead;
   attribution: Record<string, string>;
+  onScheduled: () => void;
 }) {
   const [src, setSrc] = useState<string | null>(null);
 
@@ -289,17 +316,22 @@ function CalendlyStep({
       if (e.origin !== "https://calendly.com") return;
       if (e.data?.event === "calendly.event_scheduled") {
         trackConversion("booking");
+        onScheduled();
       }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  }, [onScheduled]);
+
+  const name = firstName(lead.name);
 
   return (
     <div className="mt-6">
-      <p className="text-ink">
-        Thanks{lead.name ? `, ${lead.name.split(" ")[0]}` : ""}. Now pick a time
-        that works for you.
+      <h3 className="text-xl font-semibold text-ink">
+        {name ? `Great to Meet You, ${name}` : "Great to Meet You"}
+      </h3>
+      <p className="mt-1.5 text-muted">
+        Pick a time that suits you for your free 30 minute strategy call.
       </p>
       <div className="-mx-2 mt-4 h-[700px] overflow-hidden rounded-2xl md:-mx-4">
         {src && (
@@ -320,6 +352,94 @@ function CalendlyStep({
         >
           Open the Booking Page
         </a>
+      </p>
+    </div>
+  );
+}
+
+const nextSteps = [
+  {
+    title: "Check Your Inbox",
+    text: "Your calendar invite has the time and call details. Add it to your calendar so it doesn't slip.",
+  },
+  {
+    title: "We Prepare for Your Call",
+    text: "We look over what you shared, including your biggest challenge, so the 30 minutes are spent on your business.",
+  },
+  {
+    title: "Your Strategy Call",
+    text: "We map where your leads are being lost and outline the system that fixes it.",
+  },
+];
+
+const prepItems = [
+  "Where your leads come from today",
+  "The CRM or tools you currently use",
+  "Your monthly ad spend, if you run ads",
+];
+
+function Confirmation({ lead }: { lead: Lead }) {
+  const name = firstName(lead.name);
+  return (
+    <div className="mt-8">
+      <div className="text-center">
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-brand-soft ring-8 ring-brand-soft/50">
+          <span className="grid size-11 place-items-center rounded-full bg-brand text-white">
+            <Icon name="check" className="size-6" strokeWidth={2.6} />
+          </span>
+        </span>
+        <h3 className="mt-6 text-2xl font-semibold text-balance text-ink md:text-3xl">
+          {name ? `You're Booked, ${name}` : "You're Booked"}
+        </h3>
+        <p className="mx-auto mt-3 max-w-sm leading-relaxed text-muted">
+          Your free strategy call is confirmed. A calendar invite is on its way
+          to <span className="font-semibold text-ink">{lead.email}</span>.
+        </p>
+      </div>
+
+      <div className="mt-8 border-t border-line pt-7">
+        <p className="text-sm font-semibold tracking-wide text-brand uppercase">
+          What Happens Next
+        </p>
+        <ol className="mt-5 space-y-5">
+          {nextSteps.map((step, i) => (
+            <li key={step.title} className="flex gap-4">
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-white">
+                {i + 1}
+              </span>
+              <div>
+                <p className="font-semibold text-ink">{step.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">
+                  {step.text}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="mt-7 rounded-2xl bg-paper-alt p-5">
+        <p className="font-semibold text-ink">Helpful to Have Ready</p>
+        <ul className="mt-3 space-y-2.5">
+          {prepItems.map((item) => (
+            <li key={item} className="flex gap-2.5 text-sm text-ink-soft">
+              <Icon name="check" className="mt-0.5 size-4 shrink-0 text-brand" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <p className="mt-6 text-center text-sm leading-relaxed text-muted">
+        Need to reschedule? Use the link in your confirmation email, or reach us
+        at{" "}
+        <a
+          href={`mailto:${contact.email}`}
+          className="font-semibold text-ink underline underline-offset-2"
+        >
+          {contact.email}
+        </a>
+        .
       </p>
     </div>
   );

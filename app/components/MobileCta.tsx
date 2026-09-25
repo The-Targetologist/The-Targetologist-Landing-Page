@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-// Sticky bottom CTA on phones. Appears after the hero and hides while the
-// booking section is on screen, so it never covers the form.
+// Sticky bottom CTA on phones. Appears after the hero, hides while the
+// booking section is on screen, and goes away for good once a call is booked.
 export function MobileCta() {
   const [visible, setVisible] = useState(false);
 
@@ -11,7 +11,12 @@ export function MobileCta() {
     const book = document.getElementById("book");
     let pastHero = false;
     let bookInView = false;
-    const update = () => setVisible(pastHero && !bookInView);
+    let booked = false;
+    const update = () => setVisible(pastHero && !bookInView && !booked);
+    const onBooked = () => {
+      booked = true;
+      update();
+    };
 
     const onScroll = () => {
       pastHero = window.scrollY > window.innerHeight * 0.6;
@@ -23,9 +28,11 @@ export function MobileCta() {
     });
     if (book) observer.observe(book);
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("targetologist:booked", onBooked);
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("targetologist:booked", onBooked);
     };
   }, []);
 
