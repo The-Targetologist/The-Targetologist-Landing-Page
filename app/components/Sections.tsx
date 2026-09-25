@@ -252,7 +252,7 @@ export function Proof() {
       <SectionHeading
         eyebrow="Recent Work"
         title="Systems We've Built for Businesses Like Yours"
-        intro="Every business comes to us with a different problem. Here's a look at what we built for a few of them, with client names kept private out of respect for our partners."
+        intro="Every business comes to us with a different problem. Here's a look at what we built for a few of them."
       />
       <div className="grid gap-5 md:grid-cols-2">
         {caseStudies.map((c) => (
