@@ -101,7 +101,7 @@ export function BookingCard() {
         <>
           <div className="flex items-center justify-between gap-3 px-3 pt-3 sm:px-4">
             <p className="font-semibold text-ink">Pick a Time for Your Call</p>
-            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand">
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-text">
               <Icon name="calendar" className="size-3.5" />
               30 Min
             </span>
@@ -208,7 +208,7 @@ function Confirmation() {
       </div>
 
       <div className="mt-8 border-t border-line pt-7">
-        <p className="text-sm font-semibold tracking-wide text-brand uppercase">
+        <p className="text-sm font-semibold tracking-wide text-brand-text uppercase">
           What Happens Next
         </p>
         <ol className="mt-5 space-y-5">

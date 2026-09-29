@@ -33,7 +33,7 @@ export function CtaButton({
 
 export function Eyebrow({ children }: { children: ReactNode }) {
   return (
-    <p className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand uppercase">
+    <p className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-text uppercase">
       <span className="size-1.5 rounded-full bg-brand" />
       {children}
     </p>

@@ -5,6 +5,9 @@
   --color-brand: #e4572e;
   --color-brand-dark: #c8461f;
   --color-brand-soft: #fdf0eb;
+  /* Deeper orange for small text: passes WCAG AA (4.5:1) on white, paper-alt
+     and brand-soft, where the main brand orange does not. */
+  --color-brand-text: #b93f1b;
   --color-ink: #020202;
   --color-ink-soft: #0f172a;
   --color-muted: #667085;

@@ -37,7 +37,7 @@ export function Proof() {
             key={c.title}
             className="flex flex-col rounded-3xl border border-line bg-white p-7"
           >
-            <p className="text-sm font-semibold text-brand">{c.industry}</p>
+            <p className="text-sm font-semibold text-brand-text">{c.industry}</p>
             <h3 className="mt-3 text-xl leading-snug font-semibold text-ink">
               {c.title}
             </h3>
@@ -90,7 +90,7 @@ export function Manage() {
               <span className="grid size-14 place-items-center rounded-2xl bg-ink text-brand ring-1 ring-white/15">
                 <Icon name={s.icon} className="size-6" />
               </span>
-              <span className="mt-4 text-xs font-semibold text-white/40 tabular-nums">
+              <span className="mt-4 text-xs font-semibold text-white/60 tabular-nums">
                 0{i + 1}
               </span>
               <span className="mt-1 text-lg font-semibold text-white">{s.label}</span>
