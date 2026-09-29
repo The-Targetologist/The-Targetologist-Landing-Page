@@ -9,8 +9,7 @@ export function Footer() {
         <div className="max-w-xs">
           <Logo className="h-11 w-auto text-white" />
           <p className="mt-4 text-sm leading-relaxed">
-            Revenue systems for B2B service businesses. Serving US-based
-            businesses.
+            Google, Meta and LinkedIn advertising for US businesses.
           </p>
         </div>
         <ul className="space-y-3 text-sm">

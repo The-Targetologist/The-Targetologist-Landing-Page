@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
+import { CTA_LABEL } from "@/lib/content";
 import { Icon } from "./Icons";
 
-// Every CTA on the page scrolls to the qualifying form (#book), the single
-// conversion point. No CTA leaves the page.
+// Every CTA on the page scrolls to the Calendly booking card in the hero
+// (#book), the single conversion point. No CTA leaves the page.
 export function CtaButton({
-  children = "Book a Free Strategy Call",
+  children = CTA_LABEL,
   variant = "primary",
   className = "",
 }: {

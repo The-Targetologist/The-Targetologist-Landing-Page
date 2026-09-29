@@ -1,358 +1,128 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { submitLead, type LeadState } from "@/app/actions";
-import { CALENDLY_URL, challenges, contact } from "@/lib/content";
-import { trackConversion } from "@/lib/tracking";
+import { useEffect, useState } from "react";
+import { CALENDLY_URL, contact } from "@/lib/content";
+import { trackBooking } from "@/lib/tracking";
 import { Icon } from "./Icons";
 
-const ATTRIBUTION_KEYS = [
+// Ad-click UTMs from the landing URL, passed through to the Calendly booking.
+// Close to Calendly's month view, so the card barely moves once it reports
+// its real height.
+const INITIAL_HEIGHT = 600;
+
+// Calendly pads the bottom of its page with ~130px of empty space. We crop
+// most of it so the card ends just under the time zone picker.
+const BOTTOM_CROP = 100;
+
+// Tallest the calendar gets. Taller views (the time slot list) scroll inside
+// the frame, keeping the card in proportion with the hero copy beside it.
+const MAX_HEIGHT = 540;
+
+const UTM_KEYS = [
   "utm_source",
   "utm_medium",
   "utm_campaign",
   "utm_content",
   "utm_term",
-  "gclid",
-  "fbclid",
-  "li_fat_id",
 ];
 
-// Ad-click attribution from the landing URL, carried into the lead and booking.
-function useAttribution() {
-  const [params, setParams] = useState<Record<string, string>>({});
-  useEffect(() => {
-    const search = new URLSearchParams(window.location.search);
-    const found: Record<string, string> = {};
-    for (const key of ATTRIBUTION_KEYS) {
-      const value = search.get(key);
-      if (value) found[key] = value;
-    }
-    // Reading the URL is only possible after hydration.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setParams(found);
-  }, []);
-  return params;
-}
-
-const initialState: LeadState = { status: "idle" };
-
-export function Booking() {
-  const [state, formAction, pending] = useActionState(submitLead, initialState);
-  const attribution = useAttribution();
-  const booked = state.status === "success";
-  const [scheduled, setScheduled] = useState(false);
-  const errors = state.status === "error" ? state.errors : {};
-  const values = state.status === "error" ? state.values : undefined;
-
-  useEffect(() => {
-    if (state.status === "success" && state.lead.email) trackConversion("lead");
-  }, [state]);
-
-  return (
-    <section
-      id="book"
-      className="relative overflow-hidden bg-ink px-5 py-20 md:px-8 md:py-28"
-    >
-      <div
-        aria-hidden
-        className="absolute -top-40 left-1/2 -z-0 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-brand/25 blur-[120px]"
-      />
-      <div className="relative mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16">
-        <div className="text-white">
-          <p className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand uppercase">
-            <span className="size-1.5 rounded-full bg-brand" />
-            Free Strategy Call
-          </p>
-          <h2 className="mt-4 text-3xl leading-tight font-semibold tracking-tight text-balance md:text-[2.75rem]">
-            Build a System That Actually Works
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-white/70">
-            Tell us a little about your business, then pick a time. In 30
-            minutes we&apos;ll map where your leads are being lost and what to
-            fix first.
-          </p>
-          <ul className="mt-8 space-y-4">
-            {[
-              "A review of your lead sources, follow-up and ad spend",
-              "The gaps costing you booked calls",
-              "A clear outline of the system we'd build",
-            ].map((item) => (
-              <li key={item} className="flex gap-3 text-white/85">
-                <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-brand">
-                  <Icon name="check" className="size-3.5" strokeWidth={2.4} />
-                </span>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-8 text-sm text-white/50">
-            No obligation and no hard sell.
-          </p>
-        </div>
-
-        <div
-          id="book-card"
-          className="scroll-mt-24 rounded-3xl bg-white p-5 shadow-2xl sm:p-6 md:p-8"
-        >
-          <Steps current={scheduled ? 3 : booked ? 2 : 1} />
-          {booked && scheduled ? (
-            <Confirmation lead={state.lead} />
-          ) : booked ? (
-            <CalendlyStep
-              lead={state.lead}
-              attribution={attribution}
-              onScheduled={() => {
-                setScheduled(true);
-                // Tells the mobile sticky CTA to stop offering a booking.
-                window.dispatchEvent(new Event("targetologist:booked"));
-                document
-                  .getElementById("book-card")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-            />
-          ) : (
-            <form
-              key={state.status === "error" ? state.attempt : "form"}
-              action={formAction}
-              className="mt-6 space-y-5"
-            >
-              <Field
-                label="Full Name"
-                name="name"
-                autoComplete="name"
-                defaultValue={values?.name}
-                error={errors.name}
-              />
-              <Field
-                label="Work Email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                defaultValue={values?.email}
-                error={errors.email}
-              />
-              <Field
-                label="Company"
-                name="company"
-                autoComplete="organization"
-                defaultValue={values?.company}
-                optional
-              />
-              <div>
-                <label
-                  htmlFor="challenge"
-                  className="block text-sm font-semibold text-ink"
-                >
-                  What&apos;s Your Biggest Challenge Right Now?
-                </label>
-                <select
-                  id="challenge"
-                  name="challenge"
-                  required
-                  defaultValue={values?.challenge ?? ""}
-                  aria-invalid={!!errors.challenge}
-                  className="mt-2 w-full appearance-none rounded-xl border border-line-strong bg-white bg-[url('data:image/svg+xml;utf8,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22%23667085%22%20stroke-width=%222%22><path%20d=%22M6%209l6%206%206-6%22/></svg>')] bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat px-4 py-3.5 pr-11 text-ink transition-colors outline-none focus:border-brand focus:ring-4 focus:ring-brand/15 aria-invalid:border-brand"
-                >
-                  <option value="" disabled>
-                    Choose One
-                  </option>
-                  {challenges.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                {errors.challenge && (
-                  <p className="mt-1.5 text-sm text-brand">{errors.challenge}</p>
-                )}
-              </div>
-
-              {/* Honeypot for bots; hidden from people and screen readers. */}
-              <div aria-hidden className="absolute -left-[9999px]">
-                <label>
-                  Website
-                  <input name="website" tabIndex={-1} autoComplete="off" />
-                </label>
-              </div>
-              {Object.entries(attribution).map(([key, value]) => (
-                <input key={key} type="hidden" name={key} value={value} />
-              ))}
-
-              <button
-                type="submit"
-                disabled={pending}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-5 py-4 text-[15px] font-semibold whitespace-nowrap text-white sm:px-7 sm:text-base shadow-[0_8px_24px_-8px_rgba(228,87,46,0.6)] transition-colors hover:bg-brand-dark disabled:opacity-70"
-              >
-                {pending ? "Please Wait" : "Continue to Pick a Time"}
-                {!pending && <Icon name="arrow" className="size-5" />}
-              </button>
-              <p className="text-center text-xs text-muted">
-                By continuing you agree to our{" "}
-                <a
-                  href={contact.privacyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2"
-                >
-                  Privacy Policy
-                </a>
-                .
-              </p>
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Steps({ current }: { current: 1 | 2 | 3 }) {
-  return (
-    <ol className="flex items-center gap-2 text-xs font-semibold whitespace-nowrap sm:gap-3 sm:text-sm">
-      {["Your Details", "Pick a Time"].map((label, i) => {
-        const n = i + 1;
-        const active = n <= current;
-        return (
-          <li key={label} className="flex items-center gap-2 sm:gap-3">
-            {i > 0 && (
-              <span className="hidden h-px w-5 bg-line-strong min-[360px]:block sm:w-10" />
-            )}
-            <span
-              className={`grid size-7 place-items-center rounded-full text-xs ${
-                active ? "bg-brand text-white" : "bg-line text-muted"
-              }`}
-            >
-              {n < current ? (
-                <Icon name="check" className="size-3.5" strokeWidth={2.6} />
-              ) : (
-                n
-              )}
-            </span>
-            <span className={active ? "text-ink" : "text-muted"}>{label}</span>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  autoComplete,
-  optional,
-  defaultValue,
-  error,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  optional?: boolean;
-  defaultValue?: string;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label htmlFor={name} className="block text-sm font-semibold text-ink">
-        {label}
-        {optional && <span className="font-normal text-muted"> (Optional)</span>}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        required={!optional}
-        defaultValue={defaultValue}
-        aria-invalid={!!error}
-        className="mt-2 w-full rounded-xl border border-line-strong px-4 py-3.5 text-ink transition-colors outline-none placeholder:text-muted/70 focus:border-brand focus:ring-4 focus:ring-brand/15 aria-invalid:border-brand"
-      />
-      {error && <p className="mt-1.5 text-sm text-brand">{error}</p>}
-    </div>
-  );
-}
-
-type Lead = { name: string; email: string; challenge: string };
-
-// "kamal ahmed" -> "Kamal"
-function firstName(name: string) {
-  const first = name.trim().split(/\s+/)[0] ?? "";
-  return first.charAt(0).toUpperCase() + first.slice(1);
-}
-
-function CalendlyStep({
-  lead,
-  attribution,
-  onScheduled,
-}: {
-  lead: Lead;
-  attribution: Record<string, string>;
-  onScheduled: () => void;
-}) {
+// Calendly inline in the hero, so visitors can pick a time without scrolling.
+// Once a call is booked, the calendar is swapped for a branded confirmation.
+export function BookingCard() {
   const [src, setSrc] = useState<string | null>(null);
+  const [scheduled, setScheduled] = useState(false);
+  const [height, setHeight] = useState(INITIAL_HEIGHT);
 
   useEffect(() => {
     const url = new URL(CALENDLY_URL);
     url.searchParams.set("embed_type", "Inline");
     url.searchParams.set("embed_domain", window.location.hostname);
     url.searchParams.set("hide_gdpr_banner", "1");
-    url.searchParams.set("name", lead.name);
-    url.searchParams.set("email", lead.email);
-    // a1 fills the first custom question on the Calendly event, if one exists.
-    url.searchParams.set("a1", lead.challenge);
-    for (const key of ATTRIBUTION_KEYS.slice(0, 5)) {
-      if (attribution[key]) url.searchParams.set(key, attribution[key]);
+    // Hides Calendly's event details panel (host, title, description), so the
+    // card shows just the calendar.
+    url.searchParams.set("hide_event_type_details", "1");
+    const search = new URLSearchParams(window.location.search);
+    for (const key of UTM_KEYS) {
+      const value = search.get(key);
+      if (value) url.searchParams.set(key, value);
     }
-    // The embed URL needs the page's hostname, only known in the browser.
+    // The embed URL needs the page's hostname and query, only known in the browser.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSrc(url.toString());
-  }, [lead, attribution]);
+  }, []);
 
-  // Calendly posts this message to the parent page when a call is booked.
+  // Calendly posts its content height as it changes (month view, then taller
+  // once a date is picked) and an event when a call is booked.
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.origin !== "https://calendly.com") return;
-      if (e.data?.event === "calendly.event_scheduled") {
-        trackConversion("booking");
-        onScheduled();
+      if (e.data?.event === "calendly.page_height") {
+        const reported = parseInt(e.data.payload?.height, 10);
+        // Skip the tiny heights Calendly reports while it's still loading.
+        if (reported >= 300) setHeight(reported);
+      } else if (e.data?.event === "calendly.event_scheduled") {
+        trackBooking();
+        setScheduled(true);
+        // Tells the mobile sticky CTA to stop offering a booking.
+        window.dispatchEvent(new Event("targetologist:booked"));
+        document
+          .getElementById("book")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [onScheduled]);
+  }, []);
 
-  const name = firstName(lead.name);
+  // Short views: frame is full height, its empty bottom cropped by the card.
+  // Tall views: frame matches the card so Calendly scrolls inside it.
+  const frame =
+    height - BOTTOM_CROP <= MAX_HEIGHT
+      ? { visible: height - BOTTOM_CROP, inner: height }
+      : { visible: MAX_HEIGHT, inner: MAX_HEIGHT };
 
   return (
-    <div className="mt-6">
-      <h3 className="text-xl font-semibold text-ink">
-        {name ? `Great to Meet You, ${name}` : "Great to Meet You"}
-      </h3>
-      <p className="mt-1.5 text-muted">
-        Pick a time that suits you for your free 30 minute strategy call.
-      </p>
-      <div className="-mx-2 mt-4 h-[700px] overflow-hidden rounded-2xl md:-mx-4">
-        {src && (
-          <iframe
-            src={src}
-            title="Book your free strategy call"
-            className="h-full w-full border-0"
-          />
-        )}
-      </div>
-      <p className="mt-3 text-center text-xs text-muted">
-        Calendar not loading?{" "}
-        <a
-          href={CALENDLY_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-ink underline underline-offset-2"
-        >
-          Open the Booking Page
-        </a>
-      </p>
+    <div
+      id="book"
+      className="relative w-full scroll-mt-6 rounded-3xl border border-line bg-white p-2 shadow-[0_30px_60px_-30px_rgba(2,2,2,0.35)] sm:p-3"
+    >
+      {scheduled ? (
+        <Confirmation />
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3 px-3 pt-3 sm:px-4">
+            <p className="font-semibold text-ink">Pick a Time for Your Call</p>
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand">
+              <Icon name="calendar" className="size-3.5" />
+              30 Min
+            </span>
+          </div>
+          <div
+            className="mt-1 overflow-hidden rounded-2xl"
+            style={{ height: frame.visible }}
+          >
+            {src && (
+              <iframe
+                src={src}
+                title="Book a call with The Targetologist"
+                className="w-full border-0"
+                style={{ height: frame.inner }}
+              />
+            )}
+          </div>
+          <p className="px-3 pb-2 text-center text-xs text-muted">
+            Calendar not loading?{" "}
+            <a
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-ink underline underline-offset-2"
+            >
+              Open the Booking Page
+            </a>
+          </p>
+        </>
+      )}
     </div>
   );
 }
@@ -364,24 +134,17 @@ const nextSteps = [
   },
   {
     title: "We Prepare for Your Call",
-    text: "We look over what you shared, including your biggest challenge, so the 30 minutes are spent on your business.",
+    text: "We look over the details you shared so the 30 minutes are spent on your business.",
   },
   {
-    title: "Your Strategy Call",
-    text: "We map where your leads are being lost and outline the system that fixes it.",
+    title: "Your Call",
+    text: "We review your current ads and tracking, and outline what we'd change first.",
   },
 ];
 
-const prepItems = [
-  "Where your leads come from today",
-  "The CRM or tools you currently use",
-  "Your monthly ad spend, if you run ads",
-];
-
-function Confirmation({ lead }: { lead: Lead }) {
-  const name = firstName(lead.name);
+function Confirmation() {
   return (
-    <div className="mt-8">
+    <div className="p-5 sm:p-7">
       <div className="text-center">
         <span className="mx-auto grid size-16 place-items-center rounded-full bg-brand-soft ring-8 ring-brand-soft/50">
           <span className="grid size-11 place-items-center rounded-full bg-brand text-white">
@@ -389,11 +152,11 @@ function Confirmation({ lead }: { lead: Lead }) {
           </span>
         </span>
         <h3 className="mt-6 text-2xl font-semibold text-balance text-ink md:text-3xl">
-          {name ? `You're Booked, ${name}` : "You're Booked"}
+          You&apos;re Booked
         </h3>
         <p className="mx-auto mt-3 max-w-sm leading-relaxed text-muted">
-          Your free strategy call is confirmed. A calendar invite is on its way
-          to <span className="font-semibold text-ink">{lead.email}</span>.
+          Your call is confirmed and a calendar invite is on its way to your
+          inbox.
         </p>
       </div>
 
@@ -416,18 +179,6 @@ function Confirmation({ lead }: { lead: Lead }) {
             </li>
           ))}
         </ol>
-      </div>
-
-      <div className="mt-7 rounded-2xl bg-paper-alt p-5">
-        <p className="font-semibold text-ink">Helpful to Have Ready</p>
-        <ul className="mt-3 space-y-2.5">
-          {prepItems.map((item) => (
-            <li key={item} className="flex gap-2.5 text-sm text-ink-soft">
-              <Icon name="check" className="mt-0.5 size-4 shrink-0 text-brand" />
-              {item}
-            </li>
-          ))}
-        </ul>
       </div>
 
       <p className="mt-6 text-center text-sm leading-relaxed text-muted">

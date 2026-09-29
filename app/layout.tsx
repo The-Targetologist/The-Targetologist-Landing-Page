@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka } from "next/font/google";
+import { preconnect } from "react-dom";
 import { Tracking } from "./components/Tracking";
 import "./globals.css";
 
@@ -10,9 +11,9 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "The Targetologist, Ads and Automation That Turn Leads Into Booked Calls",
+  title: "The Targetologist, Turn Paid Ads Into Qualified Leads & Booked Calls",
   description:
-    "We run your ads on Meta, Google, LinkedIn and other social platforms, and build the CRM and follow-up automation behind them. Book a free strategy call.",
+    "We manage Google, Meta and LinkedIn advertising for US businesses, from campaign strategy and tracking to ongoing optimization. Book a call.",
   robots: { index: false, follow: false },
 };
 
@@ -22,6 +23,11 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // Open the connection to Calendly early, so the hero calendar starts
+  // loading as soon as the booking card asks for it.
+  preconnect("https://calendly.com");
+  preconnect("https://assets.calendly.com");
+
   return (
     <html lang="en" className={`${fredoka.variable} antialiased`}>
       <body className="min-h-screen">

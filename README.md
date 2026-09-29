@@ -1,6 +1,6 @@
 # The Targetologist: Ad Landing Page
 
-Single-page conversion landing page for paid traffic (Meta, Google, LinkedIn and other social platforms). Built with Next.js 16 (App Router), React 19, TypeScript and Tailwind CSS v4. Deployed on Vercel.
+Single-page conversion landing page for paid traffic (Google, Meta and LinkedIn Ads). Built with Next.js 16 (App Router), React 19, TypeScript and Tailwind CSS v4. Deployed on Vercel.
 
 ## Develop
 
@@ -13,18 +13,20 @@ npm run lint
 
 ## Where things live
 
-- `lib/content.ts`: all page copy (headings, services, FAQ, case studies, contact details)
+- `lib/content.ts`: all page copy (trust points, results, case studies, contact details)
 - `app/components/`: page sections
-- `app/actions.ts`: qualifying form handler (validates, forwards to `LEAD_WEBHOOK_URL`)
 - `lib/tracking.ts` and `app/components/Tracking.tsx`: Meta, Google Ads and LinkedIn tags
 
 ## Environment variables
 
 See `.env.example`. All are optional; set them in Vercel under Project Settings > Environment Variables.
 
-- `LEAD_WEBHOOK_URL`: where form leads are POSTed as JSON (GoHighLevel inbound webhook, Zapier, etc.). Without it, leads are only logged.
-- Tracking IDs: each platform's tag loads only when its ID is set. Conversions fire as **Lead** (form submitted) and **Schedule** (Calendly booking made).
+- Tracking IDs: each platform's tag loads only when its ID is set. The conversion fires as **Schedule** when a Calendly booking is made.
 
 ## Lead flow
 
-Visitor fills the qualifying form, the lead is sent to the webhook, then Calendly (`hamza-thetargetologist/30min`) opens inline with name, email, challenge and UTM parameters prefilled.
+Calendly (`hamza-thetargetologist/30min`) is embedded in the hero, so visitors pick a time without scrolling. UTM parameters from the ad click are passed through to the booking. Every "Book Call" button scrolls back to it.
+
+## Adding results
+
+Real headline numbers (ad spend managed, CPL, ROAS, leads) go in `results` in `lib/content.ts`. The results strip above the case studies stays hidden until at least one is added.

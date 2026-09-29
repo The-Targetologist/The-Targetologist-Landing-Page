@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CTA_LABEL } from "@/lib/content";
 
 // Sticky bottom CTA on phones. Appears after the hero, hides while the
-// booking section is on screen, and goes away for good once a call is booked.
+// booking card is on screen, and goes away for good once a call is booked.
 export function MobileCta() {
   const [visible, setVisible] = useState(false);
 
@@ -48,7 +49,7 @@ export function MobileCta() {
         tabIndex={visible ? 0 : -1}
         className="flex w-full items-center justify-center rounded-full bg-brand px-6 py-3.5 font-semibold text-white"
       >
-        Book a Free Strategy Call
+        {CTA_LABEL}
       </a>
     </div>
   );

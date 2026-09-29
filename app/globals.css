@@ -22,7 +22,6 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
 }
 
 body {
@@ -35,15 +34,4 @@ body {
   html {
     scroll-behavior: auto;
   }
-}
-
-/* FAQ accordion: hide the default marker and rotate the custom one. */
-details > summary {
-  list-style: none;
-}
-details > summary::-webkit-details-marker {
-  display: none;
-}
-details[open] .faq-icon {
-  transform: rotate(45deg);
 }
