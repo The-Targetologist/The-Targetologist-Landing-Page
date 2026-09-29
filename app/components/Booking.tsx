@@ -5,7 +5,6 @@ import { CALENDLY_URL, contact } from "@/lib/content";
 import { trackBooking } from "@/lib/tracking";
 import { Icon } from "./Icons";
 
-// Ad-click UTMs from the landing URL, passed through to the Calendly booking.
 // Close to Calendly's month view, so the card barely moves once it reports
 // its real height.
 const INITIAL_HEIGHT = 600;
@@ -18,6 +17,11 @@ const BOTTOM_CROP = 100;
 // the frame, keeping the card in proportion with the hero copy beside it.
 const MAX_HEIGHT = 540;
 
+// If Calendly never reports a height, reveal the frame this long after it
+// loads rather than leaving the placeholder up.
+const REVEAL_FALLBACK_MS = 4000;
+
+// Ad-click UTMs from the landing URL, passed through to the Calendly booking.
 const UTM_KEYS = [
   "utm_source",
   "utm_medium",
@@ -32,6 +36,7 @@ export function BookingCard() {
   const [src, setSrc] = useState<string | null>(null);
   const [scheduled, setScheduled] = useState(false);
   const [height, setHeight] = useState(INITIAL_HEIGHT);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const url = new URL(CALENDLY_URL);
@@ -59,7 +64,11 @@ export function BookingCard() {
       if (e.data?.event === "calendly.page_height") {
         const reported = parseInt(e.data.payload?.height, 10);
         // Skip the tiny heights Calendly reports while it's still loading.
-        if (reported >= 300) setHeight(reported);
+        // The first real height means the calendar has rendered.
+        if (reported >= 300) {
+          setHeight(reported);
+          setReady(true);
+        }
       } else if (e.data?.event === "calendly.event_scheduled") {
         trackBooking();
         setScheduled(true);
@@ -98,17 +107,21 @@ export function BookingCard() {
             </span>
           </div>
           <div
-            className="mt-1 overflow-hidden rounded-2xl"
+            className="relative mt-1 overflow-hidden rounded-2xl"
             style={{ height: frame.visible }}
           >
             {src && (
               <iframe
                 src={src}
                 title="Book a call with The Targetologist"
-                className="w-full border-0"
+                className={`w-full border-0 transition-opacity duration-500 ${
+                  ready ? "opacity-100" : "opacity-0"
+                }`}
                 style={{ height: frame.inner }}
+                onLoad={() => setTimeout(() => setReady(true), REVEAL_FALLBACK_MS)}
               />
             )}
+            <CalendarSkeleton hidden={ready} />
           </div>
           <p className="px-3 pb-2 text-center text-xs text-muted">
             Calendar not loading?{" "}
@@ -123,6 +136,40 @@ export function BookingCard() {
           </p>
         </>
       )}
+    </div>
+  );
+}
+
+// Calendar-shaped placeholder shown while Calendly loads, laid out like its
+// month view so the swap feels like the calendar coming into focus.
+function CalendarSkeleton({ hidden }: { hidden: boolean }) {
+  return (
+    <div
+      aria-hidden={hidden}
+      className={`absolute inset-0 flex flex-col items-center bg-white px-6 pt-8 transition-opacity duration-500 ${
+        hidden ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+    >
+      <div className="flex w-full max-w-xs animate-pulse flex-col items-center">
+        <span className="h-6 w-32 rounded-full bg-line" />
+        <div className="mt-8 flex w-full items-center justify-between px-6">
+          <span className="size-5 rounded-full bg-line" />
+          <span className="h-4 w-28 rounded-full bg-line" />
+          <span className="size-5 rounded-full bg-line" />
+        </div>
+        <div className="mt-7 grid w-full grid-cols-7 place-items-center gap-y-5">
+          {Array.from({ length: 35 }, (_, i) => (
+            <span
+              key={i}
+              className={`size-7 rounded-full ${i < 7 ? "h-3 w-6 bg-line/70" : "bg-paper-alt"}`}
+            />
+          ))}
+        </div>
+      </div>
+      <p className="mt-8 flex items-center gap-2 text-sm font-medium text-muted" role="status">
+        <span className="size-4 animate-spin rounded-full border-2 border-brand/25 border-t-brand" />
+        Loading available times…
+      </p>
     </div>
   );
 }
