@@ -187,13 +187,12 @@ export function WhyUs() {
 export function Faq() {
   return (
     <Section>
-      <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-        <SectionHeading
-          align="left"
-          eyebrow="FAQ"
-          title="Questions Before You Book?"
-          intro="If your question isn't here, bring it to the call and we'll answer it there."
-        />
+      <SectionHeading
+        eyebrow="FAQ"
+        title="Questions Before You Book?"
+        intro="If your question isn't here, bring it to the call and we'll answer it there."
+      />
+      <div className="mx-auto max-w-3xl">
         <div className="divide-y divide-line rounded-3xl border border-line bg-white">
           {faqs.map((f) => (
             <details key={f.q} className="group px-6 md:px-8">
