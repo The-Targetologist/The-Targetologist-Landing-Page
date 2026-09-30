@@ -20,6 +20,7 @@ export function Proof() {
       <SectionHeading
         eyebrow="Recent Work"
         title="Real Results From Real Ad Accounts"
+        wide
       />
       <dl className="mb-6 grid grid-cols-3 gap-2.5 sm:gap-4">
         {results.map((r) => (
@@ -68,7 +69,8 @@ export function Proof() {
           </article>
         ))}
       </div>
-      <p className="mt-8 text-center text-sm text-muted">
+      <p className="mx-auto mt-8 max-w-5xl text-center text-balance text-muted">
+        <Icon name="chart" className="mr-2 inline size-5 -translate-y-px align-middle text-brand" />
         Figures from the Google Ads and Meta Ads accounts we manage.{" "}
         <span className="font-semibold text-ink">
           Full breakdowns available on the call.
@@ -154,12 +156,10 @@ export function Manage() {
         </ol>
       </div>
 
-      <p className="mx-auto mt-8 flex max-w-2xl items-start justify-center gap-2.5 text-center text-muted">
-        <Icon name="bolt" className="mt-0.5 size-5 shrink-0 text-brand" />
-        <span>
-          {automationNote}{" "}
-          <span className="font-semibold text-ink">Just ask on the call.</span>
-        </span>
+      <p className="mx-auto mt-8 max-w-5xl text-center text-balance text-muted">
+        <Icon name="bolt" className="mr-2 inline size-5 -translate-y-px align-middle text-brand" />
+        {automationNote}{" "}
+        <span className="font-semibold text-ink">Just ask on the call.</span>
       </p>
     </Section>
   );
@@ -168,7 +168,11 @@ export function Manage() {
 export function WhyUs() {
   return (
     <Section className="bg-paper-alt">
-      <SectionHeading eyebrow="Why Work With Us" title="Built Around Booked Calls, Not Clicks" />
+      <SectionHeading
+        eyebrow="Why Work With Us"
+        title="Built Around Booked Calls, Not Clicks"
+        wide
+      />
       <div className="grid gap-5 md:grid-cols-3">
         {reasons.map((r) => (
           <div key={r.title} className="rounded-3xl border border-line bg-white p-6">

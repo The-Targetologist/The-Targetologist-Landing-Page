@@ -61,17 +61,20 @@ export function SectionHeading({
   intro,
   tone = "light",
   align = "center",
+  wide = false,
 }: {
   eyebrow: string;
   title: ReactNode;
   intro?: ReactNode;
   tone?: "light" | "dark";
   align?: "center" | "left";
+  // Wider box so a longer title fits on one line on desktop.
+  wide?: boolean;
 }) {
   const centered = align === "center";
   return (
     <div
-      className={`max-w-2xl ${centered ? "mx-auto text-center" : ""} mb-12 md:mb-16`}
+      className={`${wide ? "max-w-4xl" : "max-w-2xl"} ${centered ? "mx-auto text-center" : ""} mb-12 md:mb-16`}
     >
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2
