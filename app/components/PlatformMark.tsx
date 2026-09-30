@@ -8,6 +8,7 @@ export const platformAccent: Record<Platform, string> = {
 };
 
 const sizes = {
+  xs: { box: "size-7 rounded-lg", text: "text-base", textIn: "text-xs" },
   sm: { box: "size-9 rounded-xl", text: "text-xl", textIn: "text-base" },
   lg: { box: "size-14 rounded-2xl", text: "text-3xl", textIn: "text-2xl" },
 };

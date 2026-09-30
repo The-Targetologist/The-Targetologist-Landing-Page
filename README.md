@@ -27,6 +27,10 @@ See `.env.example`. All are optional; set them in Vercel under Project Settings 
 
 Calendly (`hamza-thetargetologist/30min`) is embedded in the hero, so visitors pick a time without scrolling. UTM parameters from the ad click are passed through to the booking. Every "Book Call" button scrolls back to it.
 
+## Adding client logos
+
+Put logo files (SVG or PNG) in `public/logos/` and list them in `clientLogos` in `lib/content.ts`. The "Brands We've Worked With" strip under the hero stays hidden until at least one is added. Only list clients who've agreed to be shown.
+
 ## Adding results
 
 Real headline numbers (ad spend managed, CPL, ROAS, leads) go in `results` in `lib/content.ts`. The results strip above the case studies stays hidden until at least one is added.

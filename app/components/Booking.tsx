@@ -46,6 +46,13 @@ export function BookingCard() {
     // Hides Calendly's event details panel (host, title, description), so the
     // card shows just the calendar.
     url.searchParams.set("hide_event_type_details", "1");
+    // Open on the visitor's current month. Left to itself, Calendly can open on
+    // the previous month around month end and show "No times in <month>".
+    const now = new Date();
+    url.searchParams.set(
+      "month",
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`,
+    );
     const search = new URLSearchParams(window.location.search);
     for (const key of UTM_KEYS) {
       const value = search.get(key);

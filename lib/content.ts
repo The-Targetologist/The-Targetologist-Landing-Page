@@ -26,6 +26,12 @@ export const trustPoints = [
 // The strip stays hidden until at least one real, verifiable result is added.
 export const results: { value: string; label: string }[] = [];
 
+// Client logos for the strip under the hero. Put the files in public/logos/
+// and list them here, only for clients who've agreed to be shown, e.g.
+//   { name: "Acme Co", src: "/logos/acme.svg" }
+// The section stays hidden until at least one logo is added.
+export const clientLogos: { name: string; src: string }[] = [];
+
 export const platforms = [
   {
     key: "google",
@@ -52,21 +58,78 @@ export const scope = [
   { icon: "chart", label: "Reporting" },
 ] as const;
 
-export const caseStudies = [
+// Automation stays a secondary, one-line mention so it doesn't compete with ads.
+export const automationNote =
+  "Need more than ads? We can also set up CRM and follow-up automation, so every lead gets a fast response.";
+
+// Case study cards. For each real one from Hamza, fill in:
+//   client    the client or brand name, shown as the card heading
+//   result    the headline number, e.g. { value: "-42%", label: "Cost Per Lead" }
+//   platforms the ad platforms used, shown as small logos
+// Cards without a client or result fall back to the title and skip the result
+// block, so the current cards keep working until the real ones arrive.
+export type CaseStudy = {
+  client?: string;
+  industry: string;
+  title: string;
+  did: string;
+  result?: { value: string; label: string };
+  platforms?: ("google" | "meta" | "linkedin")[];
+};
+
+export const caseStudies: CaseStudy[] = [
   {
     industry: "Import, Export and Trading",
     title: "Paid Campaigns Across Three Service Lines",
-    text: "Paid ad campaigns for a multi-service trading group, with lead capture and follow-up set up for three separate service lines under one account.",
+    did: "Paid ad campaigns for a multi-service trading group, with lead capture and follow-up set up for three separate service lines under one account.",
   },
   {
     industry: "Healthcare and Medical Equipment",
     title: "Retargeting for a Medical Device Seller",
-    text: "A retargeting campaign built around a specific product offer for a refurbished medical device seller, with suppression logic so recent buyers weren't contacted again.",
+    did: "A retargeting campaign built around a specific product offer for a refurbished medical device seller, with suppression logic so recent buyers weren't contacted again.",
   },
   {
     industry: "Employee Benefits and Insurance",
     title: "Segmented Campaigns for a Benefits Provider",
-    text: "Campaigns segmented by audience type, such as technician and veteran focused messaging, with ongoing monthly performance reporting.",
+    did: "Campaigns segmented by audience type, such as technician and veteran focused messaging, with ongoing monthly performance reporting.",
+  },
+];
+
+// Answers marked GENERIC defer to the call until real details are confirmed:
+// minimum ad budget, fee structure, contract terms, landing page work and
+// start timeline. Replace them once those are known.
+export const faqs = [
+  {
+    q: "Which Ad Platforms Do You Manage?",
+    a: "Google Ads, Meta Ads (Facebook and Instagram) and LinkedIn Ads. We recommend where to focus based on where your buyers spend their time, rather than running every platform by default.",
+  },
+  {
+    // GENERIC
+    q: "How Much Do I Need to Spend on Ads?",
+    a: "It depends on your market, your goals and what a lead is worth to you. On the call we'll look at your numbers and suggest a realistic starting budget.",
+  },
+  {
+    // GENERIC
+    q: "How Does Pricing Work? Is There a Contract?",
+    a: "Our fee depends on the platforms and scope involved. We'll walk you through pricing and terms on the call, with no obligation to move forward.",
+  },
+  {
+    // GENERIC
+    q: "Do You Help With Landing Pages?",
+    a: "Where your ads send people matters as much as the ads themselves. On the call we'll look at your current pages and talk through whether they're ready for paid traffic.",
+  },
+  {
+    q: "How Do You Track Results?",
+    a: "We set up conversion tracking so we can measure real leads and booked calls, not just clicks. You get clear monthly reporting on what you spent, what it produced and what we're changing next.",
+  },
+  {
+    // GENERIC
+    q: "How Soon Can We Get Started?",
+    a: "It depends on what needs setting up, such as tracking and account access. We'll give you a realistic timeline on the call.",
+  },
+  {
+    q: "What Happens After I Book a Call?",
+    a: "You'll get a calendar invite straight away. On the 30 minute call we review your current ads, tracking and goals, and outline what we'd change first. If it's a good fit, we'll talk through next steps.",
   },
 ];
 
