@@ -31,6 +31,21 @@ export function CtaButton({
   );
 }
 
+// Dotted texture behind a section. `fade` is where the dots stay visible
+// before fading out: from the top (hero) or around the middle.
+export function DotGrid({ fade = "top" }: { fade?: "top" | "center" }) {
+  return (
+    <div
+      aria-hidden
+      className={`absolute inset-0 -z-10 bg-[radial-gradient(#e4e4e4_1px,transparent_1px)] [background-size:22px_22px] ${
+        fade === "top"
+          ? "[mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]"
+          : "[mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
+      }`}
+    />
+  );
+}
+
 export function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <p className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-brand-text uppercase">

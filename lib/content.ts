@@ -16,9 +16,9 @@ export const contact = {
 };
 
 export const trustPoints = [
-  "Google, Meta and LinkedIn Ads under one team",
   "Conversion tracking set up before we scale spend",
   "Clear monthly reporting on leads and booked calls",
+  "US-based team in Boca Raton, Florida",
 ];
 
 // Headline numbers for the proof strip, e.g.
@@ -96,62 +96,47 @@ export const caseStudies: CaseStudy[] = [
 ];
 
 // Answers marked GENERIC defer to the call until real details are confirmed:
-// minimum ad budget, fee structure, contract terms, landing page work and
-// start timeline. Replace them once those are known.
+// minimum ad budget, fee structure, contract terms and landing page work.
+// Replace them once those are known.
 export const faqs = [
   {
     q: "Which Ad Platforms Do You Manage?",
-    a: "Google Ads, Meta Ads (Facebook and Instagram) and LinkedIn Ads. We recommend where to focus based on where your buyers spend their time, rather than running every platform by default.",
+    a: "Google Ads, Meta Ads (Facebook and Instagram) and LinkedIn Ads. We focus on the platforms where your buyers are.",
   },
   {
     // GENERIC
-    q: "How Much Do I Need to Spend on Ads?",
-    a: "It depends on your market, your goals and what a lead is worth to you. On the call we'll look at your numbers and suggest a realistic starting budget.",
-  },
-  {
-    // GENERIC
-    q: "How Does Pricing Work? Is There a Contract?",
-    a: "Our fee depends on the platforms and scope involved. We'll walk you through pricing and terms on the call, with no obligation to move forward.",
+    q: "What Budget and Pricing Should I Expect?",
+    a: "It depends on your market, goals and the platforms involved. On the call we'll suggest a realistic ad budget and walk you through our pricing and terms, with no obligation.",
   },
   {
     // GENERIC
     q: "Do You Help With Landing Pages?",
-    a: "Where your ads send people matters as much as the ads themselves. On the call we'll look at your current pages and talk through whether they're ready for paid traffic.",
+    a: "Where your ads send people matters as much as the ads. On the call we'll look at your current pages and whether they're ready for paid traffic.",
   },
   {
     q: "How Do You Track Results?",
-    a: "We set up conversion tracking so we can measure real leads and booked calls, not just clicks. You get clear monthly reporting on what you spent, what it produced and what we're changing next.",
-  },
-  {
-    // GENERIC
-    q: "How Soon Can We Get Started?",
-    a: "It depends on what needs setting up, such as tracking and account access. We'll give you a realistic timeline on the call.",
+    a: "We set up conversion tracking to measure real leads and booked calls, not just clicks, and send clear monthly reports.",
   },
   {
     q: "What Happens After I Book a Call?",
-    a: "You'll get a calendar invite straight away. On the 30 minute call we review your current ads, tracking and goals, and outline what we'd change first. If it's a good fit, we'll talk through next steps.",
+    a: "You'll get a calendar invite straight away. On the 30 minute call we review your ads, tracking and goals, and outline what we'd change first.",
   },
 ];
 
 export const reasons = [
   {
     icon: "target",
-    title: "Managed Against Booked Calls",
-    text: "We optimize for qualified leads and calls on your calendar, not clicks and impressions.",
+    title: "Quality Over Volume",
+    text: "We optimize for leads that turn into calls on your calendar, not cheap clicks and impressions.",
   },
   {
-    icon: "bolt",
-    title: "Tracking First",
-    text: "Conversion tracking is set up properly from the start, so every budget decision is based on real leads.",
+    icon: "trend",
+    title: "Budget Follows Results",
+    text: "We move spend toward the campaigns and platforms producing leads, and cut what isn't working.",
   },
   {
-    icon: "calendar",
-    title: "Clear Monthly Reporting",
-    text: "You see what you spent, what it produced and what we're changing next.",
-  },
-  {
-    icon: "users",
-    title: "One Team, Every Platform",
-    text: "Google, Meta and LinkedIn run by one team, so budget moves to whatever is working.",
+    icon: "chart",
+    title: "Tracking and Reporting You Can Trust",
+    text: "Conversion tracking is set up properly from the start, and each month you see what you spent, what it produced and what we're changing next.",
   },
 ] as const;

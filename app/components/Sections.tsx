@@ -11,11 +11,12 @@ import {
 } from "@/lib/content";
 import { Icon } from "./Icons";
 import { PlatformMark, platformAccent } from "./PlatformMark";
-import { CtaButton, Section, SectionHeading } from "./ui";
+import { CtaButton, DotGrid, Section, SectionHeading } from "./ui";
 
 export function Proof() {
   return (
-    <Section>
+    <Section className="relative isolate overflow-hidden">
+      <DotGrid fade="center" />
       <SectionHeading
         eyebrow="Recent Work"
         title="Campaigns We've Run for Businesses Like Yours"
@@ -169,8 +170,8 @@ export function Manage() {
 export function WhyUs() {
   return (
     <Section className="bg-paper-alt">
-      <SectionHeading eyebrow="Why Work With Us" title="Ads Run for Results, Not Reports" />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <SectionHeading eyebrow="Why Work With Us" title="Built Around Booked Calls, Not Clicks" />
+      <div className="grid gap-5 md:grid-cols-3">
         {reasons.map((r) => (
           <div key={r.title} className="rounded-3xl border border-line bg-white p-6">
             <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-brand">
