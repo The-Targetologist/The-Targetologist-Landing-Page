@@ -19,63 +19,61 @@ export function Proof() {
       <DotGrid fade="center" />
       <SectionHeading
         eyebrow="Recent Work"
-        title="Campaigns We've Run for Businesses Like Yours"
+        title="Real Results From Real Ad Accounts"
       />
-      {results.length > 0 && (
-        <dl className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {results.map((r) => (
-            <div
-              key={r.label}
-              className="flex flex-col-reverse rounded-3xl bg-ink p-6 text-center text-white"
-            >
-              <dt className="mt-2 text-sm text-white/70">{r.label}</dt>
-              <dd className="text-3xl font-semibold text-brand tabular-nums md:text-4xl">
-                {r.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      )}
+      <dl className="mb-6 grid grid-cols-3 gap-2.5 sm:gap-4">
+        {results.map((r) => (
+          <div
+            key={r.label}
+            className="flex flex-col-reverse rounded-2xl bg-ink px-2 py-5 text-center text-white sm:rounded-3xl sm:px-6 sm:py-7"
+          >
+            <dt className="mt-1.5 text-xs font-medium text-white/70 sm:mt-2 sm:text-sm">{r.label}</dt>
+            <dd className="text-2xl font-semibold text-brand tabular-nums sm:text-4xl md:text-5xl">
+              {r.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
       <div className="grid gap-5 md:grid-cols-3">
         {caseStudies.map((c) => (
           <article
-            key={c.title}
+            key={c.client}
             className="flex flex-col rounded-3xl border border-line bg-white p-7"
           >
             <div className="flex items-start justify-between gap-3">
               <p className="text-sm font-semibold text-brand-text">{c.industry}</p>
-              {c.platforms && (
-                <div className="flex shrink-0 gap-1.5">
-                  {c.platforms.map((p) => (
-                    <PlatformMark key={p} platform={p} size="xs" />
-                  ))}
-                </div>
-              )}
+              <PlatformMark platform={c.platform} size="xs" />
             </div>
             <h3 className="mt-3 text-xl leading-snug font-semibold text-ink">
-              {c.client ?? c.title}
+              {c.client}
             </h3>
-            {c.result && (
-              <div className="mt-5 rounded-2xl bg-brand-soft px-5 py-4">
-                <p className="text-3xl font-semibold text-brand-text tabular-nums">
-                  {c.result.value}
-                </p>
-                <p className="mt-1 text-sm font-medium text-ink-soft">
-                  {c.result.label}
-                </p>
-              </div>
-            )}
-            {c.client && (
-              <p className="mt-5 text-xs font-semibold tracking-wider text-muted uppercase">
-                What We Did
+            <div className="mt-5 rounded-2xl bg-brand-soft px-5 py-4">
+              <p className="text-4xl font-semibold text-brand-text tabular-nums">
+                {c.result.value}
               </p>
-            )}
-            <p className={`leading-relaxed text-muted ${c.client ? "mt-2" : "mt-3"}`}>
-              {c.did}
+              <p className="mt-1 text-sm font-medium text-ink-soft">{c.result.label}</p>
+            </div>
+            <dl className="mt-3 grid grid-cols-2 gap-3">
+              {c.stats.map((s) => (
+                <div key={s.label} className="flex flex-col-reverse rounded-2xl bg-paper-alt px-4 py-3">
+                  <dt className="mt-0.5 text-xs text-muted">{s.label}</dt>
+                  <dd className="text-lg font-semibold text-ink tabular-nums">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-5 text-xs font-semibold tracking-wider text-muted uppercase">
+              What We Did
             </p>
+            <p className="mt-2 leading-relaxed text-muted">{c.did}</p>
           </article>
         ))}
       </div>
+      <p className="mt-8 text-center text-sm text-muted">
+        Figures from the Google Ads and Meta Ads accounts we manage.{" "}
+        <span className="font-semibold text-ink">
+          Full breakdowns available on the call.
+        </span>
+      </p>
     </Section>
   );
 }

@@ -16,15 +16,23 @@ export const contact = {
 };
 
 export const trustPoints = [
+  "$1.5M+ in ad spend managed across Google and Meta",
   "Conversion tracking set up before we scale spend",
-  "Clear monthly reporting on leads and booked calls",
   "US-based team in Boca Raton, Florida",
 ];
 
-// Headline numbers for the proof strip, e.g.
-//   { value: "$1.2M+", label: "Ad Spend Managed" }
-// The strip stays hidden until at least one real, verifiable result is added.
-export const results: { value: string; label: string }[] = [];
+// Headline numbers above the case studies, totalled from the ad account
+// portfolios (Google Ads and Meta Ads Manager screenshots), rounded down:
+//   spend        $426K Google (newsletter) + ~$1.08M Meta (4 arbitrage
+//                accounts) + A$9K Google (caravan) + $1.5K Meta (home care)
+//   conversions  ~2M Google (newsletter) + 670K Meta (one arbitrage account
+//                that reports a total) + 840 + 59
+//   campaigns    456 Meta (arbitrage) + 53 Google (newsletter) + 14 (caravan)
+export const results = [
+  { value: "$1.5M+", label: "Ad Spend Managed" },
+  { value: "2.5M+", label: "Conversions Tracked" },
+  { value: "500+", label: "Campaigns Managed" },
+];
 
 // Client logos for the strip under the hero. Put the files in public/logos/
 // and list them here, only for clients who've agreed to be shown, e.g.
@@ -62,36 +70,51 @@ export const scope = [
 export const automationNote =
   "Need more than ads? We can also set up CRM and follow-up automation, so every lead gets a fast response.";
 
-// Case study cards. For each real one from Hamza, fill in:
-//   client    the client or brand name, shown as the card heading
-//   result    the headline number, e.g. { value: "-42%", label: "Cost Per Lead" }
-//   platforms the ad platforms used, shown as small logos
-// Cards without a client or result fall back to the title and skip the result
-// block, so the current cards keep working until the real ones arrive.
+// Case study cards, from the portfolios Hamza shared. Clients are described
+// rather than named until each one agrees to be shown. Figures are copied
+// from the ad account screenshots in those portfolios.
 export type CaseStudy = {
-  client?: string;
+  client: string;
   industry: string;
-  title: string;
+  platform: "google" | "meta";
+  result: { value: string; label: string };
+  stats: { value: string; label: string }[];
   did: string;
-  result?: { value: string; label: string };
-  platforms?: ("google" | "meta" | "linkedin")[];
 };
 
 export const caseStudies: CaseStudy[] = [
   {
-    industry: "Import, Export and Trading",
-    title: "Paid Campaigns Across Three Service Lines",
-    did: "Paid ad campaigns for a multi-service trading group, with lead capture and follow-up set up for three separate service lines under one account.",
+    client: "Caravan Storage Business",
+    industry: "Local Storage, Australia",
+    platform: "google",
+    result: { value: "840", label: "Tracked conversions" },
+    stats: [
+      { value: "A$10.76", label: "Cost per conversion" },
+      { value: "A$9.04K", label: "Ad spend" },
+    ],
+    did: "Search and Performance Max campaigns for lead forms and phone calls, with conversion tracking, budget control and ongoing optimization.",
   },
   {
-    industry: "Healthcare and Medical Equipment",
-    title: "Retargeting for a Medical Device Seller",
-    did: "A retargeting campaign built around a specific product offer for a refurbished medical device seller, with suppression logic so recent buyers weren't contacted again.",
+    client: "Home Care Service",
+    industry: "Healthcare Services",
+    platform: "meta",
+    result: { value: "59", label: "Leads from Meta lead forms" },
+    stats: [
+      { value: "$25.22", label: "Avg. cost per lead" },
+      { value: "$21.80", label: "Best ad set CPL" },
+    ],
+    did: "Facebook lead form campaigns with creative testing and ad set tracking, to find the creative and audience delivering the lowest cost per lead.",
   },
   {
-    industry: "Employee Benefits and Insurance",
-    title: "Segmented Campaigns for a Benefits Provider",
-    did: "Campaigns segmented by audience type, such as technician and veteran focused messaging, with ongoing monthly performance reporting.",
+    client: "Newsletter Publisher",
+    industry: "Digital Media",
+    platform: "google",
+    result: { value: "2M", label: "Subscriber conversions" },
+    stats: [
+      { value: "$0.21", label: "Cost per conversion" },
+      { value: "$426K", label: "Ad spend" },
+    ],
+    did: "High-volume Google display campaigns to grow a newsletter audience at scale, optimized by cost, conversion volume, device and audience.",
   },
 ];
 
